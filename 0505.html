@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>05.05초를 잡아라</title>
+  </head>
+  <body style="margin: 0">
+    <div
+      style="
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+      "
+    >
+      <h1 id="stopwatch" style="width: 450px; font-size: 185px">00.00</h1>
+    </div>
+  </body>
+  <script>
+    const stopwatch = document.getElementById("stopwatch");
+    let timerId;
+    let time = 0;
+    let sec, msec;
+    let isRunning = false;
+
+    // 클릭 이벤트 처리
+    let lastClickTime = 0;
+    let clickCount = 1;
+
+    function printTime() {
+      time += 10; // 10밀리초씩 증가
+      stopwatch.innerText = getTimeFormatString();
+    }
+
+    //시계 시작
+    function startClock() {
+      if (!isRunning) {
+        isRunning = true;
+        timerId = setInterval(printTime, 10);
+      }
+    }
+
+    //시계 중지
+    function stopClock() {
+      if (isRunning) {
+        clearInterval(timerId);
+        isRunning = false;
+        updateBackgroundColor();
+      }
+    }
+
+    // 시계 초기화
+    function resetClock() {
+      stopClock();
+      stopwatch.innerText = "00.00";
+      time = 0;
+      document.body.style.backgroundColor = "transparent";
+    }
+
+    // 시간(int)을 분, 초, 밀리초 문자열로 변환
+    function getTimeFormatString() {
+      min = parseInt(String(time / (60 * 1000)));
+      sec = parseInt(String((time - min * 60 * 1000) / 1000));
+      msec = parseInt(String((time % 1000) / 10));
+
+      return (
+        String(sec).padStart(2, "0") +
+        "." +
+        String(msec).padStart(2, "0")
+      );
+    }
+
+    // 배경색 업데이트
+    function updateBackgroundColor() {
+      const totalSeconds = min * 60 + sec + msec / 100;
+
+      // 5.04초 노란색
+      if (totalSeconds == 5.04) {
+        document.body.style.backgroundColor = "gold";
+
+        // 5.05초 초록색
+      } else if (totalSeconds == 5.05) {
+        document.body.style.backgroundColor = "limegreen";
+
+        // 5.06초 노란색
+      } else if (totalSeconds == 5.06) {
+        document.body.style.backgroundColor = "gold";
+
+        // 그외 빨간색
+      } else {
+        document.body.style.backgroundColor = "firebrick";
+      }
+    }
+
+    document.addEventListener("click", function () {
+      const currentTime = new Date().getTime();
+
+      // 클릭 횟수에 따른 동작
+      if (clickCount === 1) {
+        startClock();
+      } else if (clickCount === 2) {
+        stopClock();
+      } else if (clickCount === 3) {
+        resetClock();
+        clickCount = 0;
+      }
+
+      clickCount++;
+      lastClickTime = currentTime;
+    });
+  </script>
+</html>
